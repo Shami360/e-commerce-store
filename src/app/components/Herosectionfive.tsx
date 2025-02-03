@@ -1,7 +1,11 @@
+'use client'
+
 import React from "react";
 import Image from "next/image";
-import Hero from "../../../public/images/img4.png"
+
 import { ProductType } from "@/types/product";
+import { addItemToCart } from "@/services/cart";
+import { CartType } from "@/types/cart";
 
 export default function HerosectionfiveComponent({ data }: { data: ProductType[] }) {
   return (
@@ -63,7 +67,14 @@ export default function HerosectionfiveComponent({ data }: { data: ProductType[]
               </button>
             </div>
           </div>
-          <button className="w-48 bg-purple-900 text-white py-3 rounded-lg hover:bg-purple-800">
+          <button onClick={() => addItemToCart({
+            productId: data[0]._id,
+            name: data[0].name,
+            price: data[0].price,
+            image: data[0].imageUrl,
+            quantity: 1,
+            description: data[0].description,
+          })} className="w-48 bg-purple-900 text-white py-3 rounded-lg hover:bg-purple-800">
             Add to cart
           </button>
         </div>

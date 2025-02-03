@@ -1,10 +1,18 @@
-
+'use client'
 import React from "react";
 import Image from "next/image";
 import Image7 from "../../../public/images/img7.png";
 import Image2 from "../../../public/images/img2.png";
+import { useCartContext } from "@/context/cart";
+import { CartType } from "@/types/cart";
 
 export default function ShoppingCart() {
+
+  const { addToCart,
+    dynamicCartItems,
+    getCartTotal,
+    removeFromCart } = useCartContext();
+  
   const cartItems = [
     {
       id: 1,
@@ -42,7 +50,7 @@ export default function ShoppingCart() {
           </tr>
         </thead>
         <tbody>
-          {cartItems.map((item) => (
+          {dynamicCartItems == null ?  cartItems.map((item) => (
             <tr key={item.id} className="border-b">
               {/* Product Details */}
               <td className="py-4">
@@ -65,11 +73,11 @@ export default function ShoppingCart() {
               {/* Quantity */}
               <td className="py-4 text-center">
                 <div className="flex items-center justify-center gap-2">
-                  <button className="px-2 py-1 border rounded hover:bg-gray-200">
+                  <button onClick={() => removeFromCart(item)} className="px-2 py-1 border rounded hover:bg-gray-200">
                     -
                   </button>
                   <span className="px-4">{item.quantity}</span>
-                  <button className="px-2 py-1 border rounded hover:bg-gray-200">
+                  <button onClick={()=> addToCart(item)} className="px-2 py-1 border rounded hover:bg-gray-200">
                     +
                   </button>
                 </div>
@@ -78,14 +86,50 @@ export default function ShoppingCart() {
               {/* Total */}
               <td className="py-4 font-bold text-gray-800">£{item.price}</td>
             </tr>
-          ))}
+          )) :  dynamicCartItems.map((item:CartType) => (
+            <tr key={item._id} className="border-b">
+              {/* Product Details */}
+              <td className="py-4">
+                <div className="flex items-center gap-4">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    width={140}
+                    height={140}
+                    className="rounded-lg"
+                  />
+                  <div>
+                    <h3 className="font-bold text-gray-800">{item.name}</h3>
+                    <p className="text-sm text-gray-500">{item.description}</p>
+                    <p className="mt-2 font-bold text-gray-800">£{item.price}</p>
+                  </div>
+                </div>
+              </td>
+
+              {/* Quantity */}
+              <td className="py-4 text-center">
+                <div className="flex items-center justify-center gap-2">
+                  <button onClick={() => removeFromCart(item)} className="px-2 py-1 border rounded hover:bg-gray-200">
+                    -
+                  </button>
+                  <span className="px-4">{item.quantity}</span>
+                  <button onClick={()=> addToCart(item)} className="px-2 py-1 border rounded hover:bg-gray-200">
+                    +
+                  </button>
+                </div>
+              </td>
+
+              {/* Total */}
+              <td className="py-4 font-bold text-gray-800">£{item.price * item.quantity}</td>
+            </tr>
+          )) }
         </tbody>
       </table>
 
       {/* Subtotal and Checkout */}
       <div className="mt-8 text-right">
         <div className="text-gray-500 mb-2">
-          Subtotal <span className="text-xl font-bold text-gray-800">£{subtotal}</span>
+          Subtotal <span className="text-xl font-bold text-gray-800">£{getCartTotal()}</span>
         </div>
         <p className="text-sm text-gray-500 mb-6">
           Taxes and shipping are calculated at checkout.
